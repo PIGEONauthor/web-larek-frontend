@@ -42,7 +42,7 @@ yarn build
 ```
 ## Архитектура
 
-![UML_web-larek (1)](https://github.com/PIGEONauthor/web-larek-frontend/assets/137702509/cd4dd5c1-a046-4439-a03f-2da891802434)
+![UML_web-larek (1)](https://github.com/PIGEONauthor/web-larek-frontend/assets/137702509/5b9c6072-24b1-46ac-be48-f891154086e0)
 
 ## Базовый код
 
