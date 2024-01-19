@@ -42,7 +42,7 @@ yarn build
 ```
 ## Архитектура
 
-![UML_web-larek (1)](https://github.com/PIGEONauthor/web-larek-frontend/assets/137702509/5b9c6072-24b1-46ac-be48-f891154086e0)
+![UML_web-larek (3)](https://github.com/PIGEONauthor/web-larek-frontend/assets/137702509/31831ae2-ab09-428b-8fec-ebbeebb87214)
 
 ## Базовый код
 
@@ -53,11 +53,10 @@ yarn build
  - вызов слушателей при возникновении события;
  - возможность привязать контекст к другому брокеру
 
-3) Класс ```HTMLItemAPI```<br>
-<i>обеспечивает реализацию всех компонентов (наследуется от EventEmitter).</i>
-
+3) Класс ```View```<br>
+<i>обеспечивает реализацию всех компонентов.</i>
  - наследует методы EventEmitter (устанавливает события для конкретных HTML-элементов);
- - возможность отобразить HTML-элемент на странице или убрать его;
+ - возможность отобразить HTML-элемент на странице или убрать его;
  - возможность скрыть и показать HTML-элемент;
  - установка значения в атрибуты HTML-элементов;
  - возможность считать введенные значения из инпутов;
@@ -65,15 +64,11 @@ yarn build
  - проверка вводимыч данныч на валидность, вывод сообщения валидации;
  - добавление и удаление значения CSS-классов для HTML-элементов;
  - возможность добавлять контент в начало или в конец HTML-элемента, заменять контент внутри;
-
-3) Класс ```View```<br>
-<i>представляет собой итоговый класс, от которого наследуются все компоненты (наследуется от HTMLItemAPI).</i>
-
  - возможность кэшировать DOM-элементы, находящиеся внутри компонента;
  - копирование DOM-элементов, находящиеся внутри компонента;
- - стилизация компонентов по BEM
- - клонирование шаблонных элементов
- - вставка DOM-элементов в компонент
+ - стилизация компонентов по BEM;
+ - клонирование шаблонных элементов;
+ - вставка DOM-элементов в компонент.
 
 4) Класс ```API```<br>
 <i>обеспечивает работу с данными сервера.</i>
@@ -84,7 +79,8 @@ yarn build
 
 1) Класс ```Button```
 
- - установка текста на кнопку
+ - установка текста на кнопку;
+ - сделать активной/неактивной.
 
 2) Класс ```Gallery```
 
@@ -93,8 +89,8 @@ yarn build
 
 3) Класс ```Modal``` обеспечивает работу модальных окон.
 
- - установка заголовка, контента, событий;
- - открытие и закрытие модального окна
+ - установка контента;
+ - открытие и закрытие модального окна;
  - сброс состояния внутренних компонентов модального окна;
 
 4) Класс ```Form```
@@ -104,74 +100,117 @@ yarn build
 
 ## Компоненты представления
 
-1)Класс ```Card```
-устанавливает в карточку необходимый контент
+1) Класс ```Card```
+ - устанавливает в карточку необходимый контент;
+ - открывает модальное окно по клику.
 
-2)Класс ```Basket```
-устанавливает контент для модального окна "Корзина"
+2) Класс ```Product```
+ - устанавливает в контейнер необходимый контент;
+ - добавляет продукт в корзину.
 
-3)Класс ```Payment```
-устанавливает контент для модального окна "Способ оплаты"
+4) Класс ```Basket```
+ - устанавливает контент для модального окна "Корзина";
+ - при подтверждении заказа закрывается и открывает модальное окно с Оплатой.
 
-4)Класс ```UserData```
-устанавливает контент для модального окна "Данные пользователя"
+5) Класс ```Payment```
+- устанавливает контент для модального окна "Способ оплаты";
+- проверяет валидность данных;
+- при подтверждении формы закрывается и открывает модальное оено с данными пользователя.
 
-5)Класс ```Success```
+6) Класс ```UserData```
+- устанавливает контент для модального окна "Данные пользователя";
+- проверяет валидность данных;
+- при подтверждении формы закрывается и открывает модальное оено с успешным выполнением.
+
+7) Класс ```Success```
 устанавливает контент для модального окна "Заказ оформлен!"
 
 ## Ключевые типы данных
 
 ```
-type EventName = string | RegExp; // имя события
-type EventsMap = Map<EventName, Set<EventHandler>> // объект, содержащий события и колбэки к ним
+export type EventName = string | RegExp;
 
-// основной интерфейс брокера событий
-interface IEvents {
+export interface IEvents {
   on<T extends object>(event: EventName, callback: (data: T) => void): void;
   emit<T extends object>(event: string, data?: T): void;
   trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void;
 }
 
+export interface IView<
+  NodeType extends HTMLElement,
+  DataType extends object,
+  Events extends string,
+  Modifiers
+> {
+  on(event: EventName): this;
+  off(event: EventName): this;
+  emit(): this;
+  trigger(): void;
+  bindEvent(sourceEvent: Events, targetEvent?: string, data?: object): this;
+  render(data: DataType): NodeType;
+  remove():  this;
+  show(): this;
+  hide(): this;
+  setText(value: string): this;
+  setLink(value: string): this;
+  setValue(value: string): this;
+  getValue(): string;
+  isValid(): boolean;
+  getValidationMessage(): string;
+  addClass(className: string): this;
+  removeClass(className: string): this;
+  hasClass(className: string): boolean;
+  append(element: HTMLElement): this;
+  prepend(element: HTMLElement): this;
+  bem(element?: string, modifier?: string): string;
+  toggleMod(mods: Modifiers): this;
+  factory(element: NodeType, data?: DataType, name?: string): any;
+  clone(template: string, data?: DataType, name?: string): any;
+  mount(selectorElement: HTMLElement | string, data?: any, name?: string): any;
+}
 
-type DOMEvents = keyof HTMLElementEventMap 
-type NodeType = HTMLElement // корневой элемент
+export interface IAPI {
+  baseUrl: string;
+  options: RequestInit;
 
-type Url = string // базовый URL
-type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
-
-type ViewElement<T extends HTMLElement = HTMLElement> = View<
-  T,
-  object,
-  string,
-  string
->
-
-type ViewEvent = {
-  element: ViewElement;
+  get(uri: string): Promise<object>;
+  post(uri: string, data: object, method: string): Promise<object>;
 }
 
 // интерфейс базового компонента "кнопка"
 interface IButton {
   label: string;
+  events: 'click' | 'submit'
 }
 
 // интерфейс базового компонента "галерея"
 interface IGallery {
   items: GalleryItem[];
+
+  setItems(items: IView<HTMLElement, object, 'click', string>[]): void;
 }
 
 type GalleryItem = View<HTMLElement, object, 'click', string> | HTMLCustomItem<HTMLElement, 'click'>;
 
 // интерфейс модального окна
 interface IModal {
-  header?: ViewElement;
-  content: ViewElement;
-  actions: ViewElement[];
+  container: HTMLElement;
+  content: HTMLElement;
+  closeButton: HTMLButtonElement;
+
+  setContent(): void;
+  open(): void;
+  close(): void;
+  reset(): void;
 }
 
 // интерфейс формы
-interface IFormState {
-  valid: boolean;
-  errors: string;
+interface IForm {
+  container: HTMLElement;
+  submit: HTMLButtonElement;
+  errors: HTMLElement;
+
+  isValid(): boolean;
+  setErrors(error: string): void;
 }
 ```
