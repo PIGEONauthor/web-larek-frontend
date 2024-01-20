@@ -15,45 +15,50 @@
 - src/utils/constants.ts — файл с константами
 - src/utils/utils.ts — файл с утилитами
 
-## Установка и запуск
+## ${\color{bisque}Установка \space и \space запуск}$
 Для установки и запуска проекта необходимо выполнить команды
 
-```
+```cmd
 npm install
 npm run start
 ```
 
 или
 
-```
+```cmd
 yarn
 yarn start
 ```
-## Сборка
+## ${\color{bisque}Сборка}$
 
-```
+```cmd
 npm run build
 ```
 
 или
 
-```
+```cmd
 yarn build
 ```
-## Архитектура
+## ${\color{bisque}Архитектура}$
 
-![UML_web-larek (3)](https://github.com/PIGEONauthor/web-larek-frontend/assets/137702509/31831ae2-ab09-428b-8fec-ebbeebb87214)
+${\color{red}  !!!\space В \space ПРОЦЕССЕ \space РАЗРАБОТКИ \space ПРИВЕДЕННАЯ \space НИЖЕ \space АРХИТЕКТУРА \space МОЖЕТ \space ПОНЕСТИ \space ИЗМЕНЕНИЯ \space КАК \space В \space ИНТЕРФЕЙСАХ \space ОПИСАНИЯ  }$
+${\color{red}  КЛАССОВ \space И \space В \space ТИПАХ \space ДАННЫХ, \space ДЛЯ \space ОПИСАНИЯ \space ЭТИХ \space КЛАССОВ, ТАК \space И \space В \space СПОСОБАХ \space РЕАЛИЗАЦИИ \space ДАННОГО \space ПРОЕКТА \space !!!  }$
 
-## Базовый код
+![UML_web-larek (4)](https://github.com/PIGEONauthor/web-larek-frontend/assets/137702509/f6749a82-822b-4b9c-a38a-952f6150ddd8)
 
-1) Класс ```EventEmitter```<br>
+[//]: <> (---------------------------БАЗОВЫЙ_КОД---------------------------)
+
+## ${\color{bisque}Базовый \space код}$
+
+${\color{bisque}  1)  }$ Класс ```EventEmitter```<br>
 <i>обеспечивает работу событий.</i>
 
  - установка и снятие слушателей событий;
  - вызов слушателей при возникновении события;
  - возможность привязать контекст к другому брокеру
 
-3) Класс ```View```<br>
+${\color{bisque}  2)  }$ Класс ```View```<br>
 <i>обеспечивает реализацию всех компонентов.</i>
  - наследует методы EventEmitter (устанавливает события для конкретных HTML-элементов);
  - возможность отобразить HTML-элемент на странице или убрать его;
@@ -70,64 +75,212 @@ yarn build
  - клонирование шаблонных элементов;
  - вставка DOM-элементов в компонент.
 
-4) Класс ```API```<br>
+${\color{bisque}  3)  }$ Класс ```API```<br>
 <i>обеспечивает работу с данными сервера.</i>
 
  - возможность отправлять GET и POST-запросы
 
-## Компоненты модели данных
+[//]: <> (---------------------------ХРАНИЛИЩА---------------------------)
 
-1) Класс ```Button```
+## ${\color{bisque} Компоненты \space модели \space данных \space(хранение \space данных) }$
 
- - установка текста на кнопку;
- - сделать активной/неактивной.
+${\color{bisque}  1)  }$ Класс ```CardsData```<br>
+<i>обеспечивает хранение данных о продаваемых продуктах</i>.
 
-2) Класс ```Gallery```
+свойства:
+ - <b>cards</b> - массив ключ/значение, где ключем является id-продукта, а значением - объект с данными продукта.
 
- - добавление элементов в список галлереи;
- - активация выбираемого элемента;
+методы:
+ - <b>addCard</b> - добавляет продукт в хранилище;
+ - <b>getCard</b> - достает из хранилища данные продукта;
+ - <b>getCards</b> - получить весь список объектов с данными продуктов.
 
-3) Класс ```Modal``` обеспечивает работу модальных окон.
+${\color{bisque}  2)  }$ Класс ```BusketData```<br>
+<i>обеспечивает хранение информмации о заказах, добавленных в корзину</i>.
 
- - установка контента;
- - открытие и закрытие модального окна;
- - сброс состояния внутренних компонентов модального окна;
+свойства:
+ - <b>orders</b> - массив объектов с данными заказов.
 
-4) Класс ```Form```
+методы:
+ - <b>addOrder</b> - добавить заказ в хранилище;
+ - <b>getOrders</b> - получить весь список заказов;
+ - <b>getCount</b> - получить количество заказов.
 
- - валидация инпутов
- - подтверждение формы
+[//]: <> (---------------------------КОМПОНЕНТЫ_ПРЕДСТАВЛЕНИЯ---------------------------)
 
-## Компоненты представления
+## ${\color{bisque}Компоненты \space представления}$
 
-1) Класс ```Card```
- - устанавливает в карточку необходимый контент;
- - открывает модальное окно по клику.
+[//]: <> (---------------------------1_BUTTON---------------------------)
 
-2) Класс ```Product```
- - устанавливает в контейнер необходимый контент;
- - добавляет продукт в корзину.
+${\color{bisque}  1)  }$ Класс ```Button```<br>
+<i>посторяющийся компонент кнопки</i>
 
-4) Класс ```Basket```
- - устанавливает контент для модального окна "Корзина";
- - при подтверждении заказа закрывается и открывает модальное окно с Оплатой.
+свойства:
+ - <b>label</b> - текст кнопки
 
-5) Класс ```Payment```
-- устанавливает контент для модального окна "Способ оплаты";
-- проверяет валидность данных;
-- при подтверждении формы закрывается и открывает модальное оено с данными пользователя.
+методы:
+ - <b>setLabel</b> - установка текста на кнопку;
+ - <b>enable</b> - сделать активной;
+ - <b>disable</b> - сделать неактивной.
 
-6) Класс ```UserData```
-- устанавливает контент для модального окна "Данные пользователя";
-- проверяет валидность данных;
-- при подтверждении формы закрывается и открывает модальное оено с успешным выполнением.
+[//]: <> (---------------------------2_MODAL---------------------------)
 
-7) Класс ```Success```
-устанавливает контент для модального окна "Заказ оформлен!"
+${\color{bisque}  2)  }$ Класс ```Modal```<br>
+<i>обеспечивает работу модальных окон.</i>
 
-## Ключевые типы данных
+свойства:
+ - <b>container</b> - DOM-элемент модального окна;
+ - <b>content</b> - контент для наполения модального окна;
+ - <b>closeButton</b> -  кнопка, закрывающая модальное окно.
+ 
+методы:
+ - <b>setContent</b> - установка контента;
+ - <b>open</b> - открытие модального окна;
+ - <b>close</b> - закрытие модального окна;
+ - <b>reset</b> - сброс состояния внутренних компонентов модального окна;
 
-```
+[//]: <> (---------------------------3_FORM---------------------------)
+
+${\color{bisque}  3)  }$ Класс ```Form```<br>
+<i>обеспечивает работу форм.</i>
+
+свойства:
+ - <b>container</b> - DOM-элемент модального окна;
+ - <b>submit</b> - кнопка для подтверждения формы;
+ - <b>errors</b> - DOM-элемент для вставки ошибок валидации.
+
+методы:
+ - <b>isValid</b> - валидация инпутов;
+ - <b>setErrors</b> - установка ошибки;
+ - <b>accept</b> - подтверждение формы.
+
+[//]: <> (---------------------------4_GALLERY---------------------------)
+
+${\color{bisque}  4)  }$ Класс ```Gallery```<br>
+<i>генерация галереи с карточками</i>
+
+свойства:
+ - <b>items</b> - содержит массив HTML-элементов с карточками.
+
+методы:
+ - <b>setItems</b> - добавление элементов в список галлереи.
+
+[//]: <> (---------------------------5_PAGE---------------------------)
+
+${\color{bisque}  5)  }$ Класс ```Page```<br>
+<i>компонент реализации страницы приложения</i>
+
+свойства:
+ - <b>counter</b> - счетчика заказов в корзине;
+ - <b>gallery</b> - список элементов галлереи.
+
+методы:
+ - <b>lockScroll</b> - блокирует прокрутку при открытии модального окна;
+ - <b>openBusket</b> - открывает модальное окно корзины.
+
+[//]: <> (---------------------------6_CARD---------------------------)
+
+${\color{bisque}  6)  }$ Класс ```Card```<br>
+<i>реализует карточку товара с выводом краткой информации</i>
+
+свойства:
+ - <b>id</b> - поле для хранения ID-карточки;
+ - <b>category</b> - содержит кадегорию товара;
+ - <b>title</b> - содержит заголовок карточки товара;
+ - <b>image</b> - содержит изобрадение для карточки товара;
+ - <b>price</b> - содержит цену товара.
+
+методы:
+ - <b>setImage</b> - установка изображения в карточку;
+ - <b>setTitle</b> - установка заголовка;
+ - <b>setCategory</b> - установка категрории товара;
+ - <b>setPrise</b> - установка цены товара;
+ - <b>openModal</b> - открывает модальное окно с подробным описанием товара (передает ID-карточки для заполнения данными из хранилища).
+
+[//]: <> (---------------------------7_PRODUCT---------------------------)
+
+${\color{bisque}  7)  }$ Класс ```Product```<br>
+<i>реализует контент для модального окна с подробным описанием товара, наследует свойства и методы от интерфейса карточки, дополняя его.</i>
+
+свойства:
+ - <b>description</b> - описание товара;
+
+методы:
+ - <b>setDescription</b> - установить описания товара;
+ - <b>addToBusket</b> - добавить товар в корзину (хранилище заказов);
+ - <b>openBusket</b> - открыть модальное окно корзины.
+
+[//]: <> (---------------------------8_BASKET---------------------------)
+
+${\color{bisque}  8)  }$ Класс ```Basket```<br>
+<i>реализует контент для модального окна корзины</i>
+
+свойства:
+ - <b>title</b> - заголовок;
+ - <b>orderList</b> - список товаров в заказе;
+ - <b>button</b> - кнопка для перехода к оформлению;
+ - <b>total</b> - итоговая стоимость заказа.
+
+методы:
+ - <b>setTitle</b> - установка заголовка;
+ - <b>setOrders</b> - вывод списка товаров в заказе;
+ - <b>remove</b> - убрать товар из заказа;
+ - <b>getSum</b> - посчитать итоговую сумму заказа;
+ - <b>accept</b> - при подтверждении заказа закрывается и открывает модальное окно с Оплатой.
+
+[//]: <> (---------------------------9_PAYMENT---------------------------)
+
+${\color{bisque}  9)  }$ Класс ```Payment```<br>
+<i>реализует контент для модального окна с оплатой</i>
+
+свойства:
+ - <b>title</b> - содержит заголовок;
+ - <b>formContent</b> - контент формы для оплаты;
+ - <b>button</b> - кнопка для перехода к модальному окну с вводом контактных данных.
+
+методы:
+ - <b>getAddress</b> - получение адреса из инпута;
+ - <b>isValide</b> - проверка на валидность;
+ - <b>getValidationMessage</b> - получение сообщения валидации;
+ - <b>accept</b> - при подтверждении окно оплаты закрывается и открывает модальное окно с вводом контактных данных;
+
+[//]: <> (---------------------------10_USERDATA---------------------------)
+
+${\color{bisque}  10)  }$ Класс ```UserData```<br>
+<i>реализует контент для модального окна с вводом контактных данных</i>
+
+свойства:
+ - <b>title</b> - содержит заголовок;
+ - <b>formContent</b> - контент формы для контактных данных;
+
+методы:
+ - <b>getValue</b> - получение данных из инпутов;
+ - <b>isValid</b> - проверка на валидность;
+ - <b>getValidationMessage</b> - получение сообщения валидации;
+ - <b>accept</b> - при подтверждении формы окно закрывается и открывает модальное окно с успешным выполнением;
+
+[//]: <> (---------------------------11_SUCCESS---------------------------)
+
+${\color{bisque}  11)  }$ Класс ```Success```<br>
+<i>реализует контент для модального окна с уведомлениео об успешно оформленном заказе</i>
+
+свойства:
+ - <b>image</b> - содержит изображение;
+ - <b>description</b> - содержит описание;
+ - <b>button</b> - кнопка для подтверждения и закрытия окна;
+
+методы:
+ - <b>setImage</b> - установка изображения;
+ - <b>setDescription</b> - установка описания;
+ - <b>accept</b> - при подтверждении форма закрывается;
+
+[//]: <> (---------------------------КЛЮЧЕВЫЕ_ТИПЫ_ДАННЫХ---------------------------)
+
+## ${\color{bisque}  Ключевые \space типы \space данных  }$
+
+```TypeScript
+//------------------------------EVENT EMITTER------------------------------
+
 export type EventName = string | RegExp;
 
 export interface IEvents {
@@ -135,6 +288,8 @@ export interface IEvents {
   emit<T extends object>(event: string, data?: T): void;
   trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void;
 }
+
+//------------------------------VIEW------------------------------
 
 export interface IView<
   NodeType extends HTMLElement,
@@ -169,6 +324,8 @@ export interface IView<
   mount(selectorElement: HTMLElement | string, data?: any, name?: string): any;
 }
 
+//------------------------------API------------------------------
+
 export interface IAPI {
   baseUrl: string;
   options: RequestInit;
@@ -177,23 +334,20 @@ export interface IAPI {
   post(uri: string, data: object, method: string): Promise<object>;
 }
 
-// интерфейс базового компонента "кнопка"
-interface IButton {
+//------------------------------BUTTON------------------------------
+
+export interface IButton {
   label: string;
-  events: 'click' | 'submit'
+  events: 'click' | 'submit';
+
+  setLabel(label: string): void;
+  enable(): void;
+  disable(): void;
 }
 
-// интерфейс базового компонента "галерея"
-interface IGallery {
-  items: GalleryItem[];
+//------------------------------MODAL------------------------------
 
-  setItems(items: IView<HTMLElement, object, 'click', string>[]): void;
-}
-
-type GalleryItem = View<HTMLElement, object, 'click', string> | HTMLCustomItem<HTMLElement, 'click'>;
-
-// интерфейс модального окна
-interface IModal {
+export interface IModal {
   container: HTMLElement;
   content: HTMLElement;
   closeButton: HTMLButtonElement;
@@ -204,13 +358,148 @@ interface IModal {
   reset(): void;
 }
 
-// интерфейс формы
-interface IForm {
+//------------------------------FORM------------------------------
+
+export interface IForm {
   container: HTMLElement;
   submit: HTMLButtonElement;
   errors: HTMLElement;
 
   isValid(): boolean;
   setErrors(error: string): void;
+}
+
+//------------------------------CARD DATA------------------------------
+
+export type CardData = {
+  description: string;
+  image: string;
+  title: string;
+  category: string;
+  price: string | number
+};
+
+export type CardID = string;
+
+export interface ICardsData {
+  cards: Map<CardID, CardData>
+
+  addCard(id: CardID, data: CardData): void;
+  getCard(id: CardID): CardData;
+  getCards(): CardData[];
+}
+
+//------------------------------BUSKET DATA------------------------------
+
+export type Order = {
+  number: number;
+  title: string;
+  price: string
+}
+
+export interface IBusketData {
+  orders: Order[];
+
+  addOrder(order: Order): void;
+  getOrders(): Order[];
+  getCount(): number;
+}
+
+//------------------------------GALLERY------------------------------
+
+export type GalleryItem = IView<HTMLElement, object, 'click', string>;
+
+export interface IGallery {
+  items: GalleryItem[];
+
+  setItems(items: IView<HTMLElement, object, 'click', string>[]): void;
+}
+
+//------------------------------PAGE------------------------------
+
+export interface IPage {
+  counter: number;
+  gallery: GalleryItem[];
+
+  lockScroll(): void;
+  openBusket(): void
+}
+
+//------------------------------CARD------------------------------
+
+export interface ICard {
+  id: string;
+  category: string;
+  title: string;
+  image: string;
+  price: string;
+
+  setImage(link: string): void;
+  setTitle(text: string): void;
+  setCategory(category: string): void;
+  setPrice(price: string): void;
+  openModal(modal: HTMLElement, id: string): void
+}
+
+//------------------------------PRODUCT------------------------------
+
+export interface IProduct extends ICard {
+  description: string;
+
+  setDescription(text: string): void;
+  addToBasket(): void;
+  openBasket(): void;
+}
+
+//------------------------------BUSKET------------------------------
+
+export interface IBusket {
+  title: string;
+  ordersList: HTMLElement[];
+  button: HTMLButtonElement;
+  total: string;
+
+  setTitle(title: string): void;
+  setOrders(orders: HTMLElement[]): void;
+  remove(order: HTMLElement): void;
+  getSum(): string;
+  accept(): void;
+}
+
+//------------------------------PAYMENT------------------------------
+
+export interface IPayment {
+  title: string;
+  formContent: HTMLElement;
+  button: HTMLButtonElement;
+
+  getAddress(addr: HTMLInputElement): string;
+  isValide(): boolean;
+  getValidationMessage(): string;
+  accept(): void
+}
+
+//------------------------------USERDATA------------------------------
+
+export interface IUserData {
+  title: string;
+  formContent: HTMLElement;
+
+  getValue(value: HTMLInputElement): string;
+  isValid(): boolean;
+  getValidationMessage(): string;
+  accept(): void
+}
+
+//------------------------------SUCCESS------------------------------
+
+export interface ISuccess {
+  image: string;
+  description: string;
+  button: HTMLButtonElement;
+
+  setImage(link: string): void;
+  setDescription(text: string): void;
+  accept(): void
 }
 ```
