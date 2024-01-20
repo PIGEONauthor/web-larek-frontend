@@ -42,8 +42,9 @@ yarn build
 ```
 ## ${\color{bisque}Архитектура}$
 
-${\color{red}  !!!\space В \space ПРОЦЕССЕ \space РАЗРАБОТКИ \space ПРИВЕДЕННАЯ \space НИЖЕ \space АРХИТЕКТУРА \space МОЖЕТ \space ПОНЕСТИ \space ИЗМЕНЕНИЯ \space КАК \space В \space ИНТЕРФЕЙСАХ \space ОПИСАНИЯ  }$
-${\color{red}  КЛАССОВ \space И \space В \space ТИПАХ \space ДАННЫХ, \space ДЛЯ \space ОПИСАНИЯ \space ЭТИХ \space КЛАССОВ, ТАК \space И \space В \space СПОСОБАХ \space РЕАЛИЗАЦИИ \space ДАННОГО \space ПРОЕКТА \space !!!  }$
+${\color{red}  !!!\space В \space ПРОЦЕССЕ \space РАЗРАБОТКИ \space ПРИВЕДЕННАЯ \space НИЖЕ \space АРХИТЕКТУРА \space МОЖЕТ \space ПОНЕСТИ \space ИЗМЕНЕНИЯ  }$
+${\color{red}  КАК \space В \space ИНТЕРФЕЙСАХ \space ОПИСАНИЯ \space КЛАССОВ \space И \space В \space ТИПАХ \space ДАННЫХ,\space ДЛЯ \space ОПИСАНИЯ  }$
+${\color{red}  ЭТИХ \space КЛАССОВ, ТАК \space И \space В \space СПОСОБАХ \space РЕАЛИЗАЦИИ \space ДАННОГО \space ПРОЕКТА \space !!!  }$
 
 ![UML_web-larek (4)](https://github.com/PIGEONauthor/web-larek-frontend/assets/137702509/f6749a82-822b-4b9c-a38a-952f6150ddd8)
 
