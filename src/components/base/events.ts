@@ -7,10 +7,18 @@ type EmitterEvent = {
     data: unknown
 };
 
+export type EventData = {
+  event: Event,
+  element?: HTMLElement,
+  block?: HTMLElement
+};
+
+export type EventHandler = (args: EventData | EmitterEvent) => void;
+
 export interface IEvents {
-    on<T extends object>(event: EventName, callback: (data: T) => void): void;
-    emit<T extends object>(event: string, data?: T): void;
-    trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void;
+  on(event: EventName, callback: EventHandler): void;
+  emit<T extends object>(event: string, data?: T): void;
+  trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void;
 }
 
 /**
@@ -28,7 +36,7 @@ export class EventEmitter implements IEvents {
     /**
      * Установить обработчик на событие
      */
-    on<T extends object>(eventName: EventName, callback: (event: T) => void) {
+    on(eventName: EventName, callback: EventHandler) {
         if (!this._events.has(eventName)) {
             this._events.set(eventName, new Set<Subscriber>());
         }
@@ -76,12 +84,12 @@ export class EventEmitter implements IEvents {
      * Сделать коллбек триггер, генерирующий событие при вызове
      */
     trigger<T extends object>(eventName: string, context?: Partial<T>) {
-        return (event: object = {}) => {
-            this.emit(eventName, {
-                ...(event || {}),
-                ...(context || {})
-            });
-        };
+      return (event: object = {}) => {
+        this.emit(eventName, {
+          ...(event || {}),
+          ...(context || {})
+        });
+      };
     }
 }
 
