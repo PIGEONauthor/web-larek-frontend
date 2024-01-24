@@ -13,7 +13,7 @@ export interface IProductItem {
     category: string;
     title: string;
     description?: string;
-    image: string;
+    image?: string;
     price: number;
 }
 
@@ -44,9 +44,9 @@ export interface IOrder extends IOrderForm {
 
 export type FormErrors = Partial<Record<keyof IOrder, string>>;
 
-export interface IBid {
-    price: number
-}
+// export interface IBid {
+//     price: number
+// }
 
 export interface IOrderResult {
     id: string;

@@ -11,9 +11,9 @@ interface ICardActions {
 export interface ICard<T> {
     category: string;
     title: string;
-    // description?: string | string[];
-    image: string;
-    price: string;
+    image?: string;
+    price: number;
+    description?: string | string[];
     // status: T;
 }
 
@@ -22,7 +22,7 @@ export class Card<T> extends Component<ICard<T>> {
     protected _title: HTMLElement;
     protected _image?: HTMLImageElement;
     protected _price: HTMLElement;
-    // protected _description?: HTMLElement;
+    protected _description?: HTMLElement;
     protected _button?: HTMLButtonElement;
 
     constructor(protected blockName: string, container: HTMLElement, actions?: ICardActions) {
@@ -33,7 +33,7 @@ export class Card<T> extends Component<ICard<T>> {
         this._image = ensureElement<HTMLImageElement>(`.${blockName}__image`, container);
         this._price = ensureElement<HTMLImageElement>(`.${blockName}__price`, container);
         this._button = container.querySelector(`.${blockName}__button`);
-        // this._description = container.querySelector(`.${blockName}__description`);
+        this._description = container.querySelector(`.${blockName}__description`);
 
         if (actions?.onClick) {
             if (this._button) {
@@ -41,6 +41,21 @@ export class Card<T> extends Component<ICard<T>> {
             } else {
                 container.addEventListener('click', actions.onClick);
             }
+        }
+    }
+
+    categoryColor(value: string): string {
+        switch (value) {
+            case 'софт-скил':
+                return 'soft';
+            case 'хард-скил':
+                return 'hard';
+            case 'кнопка':
+                return 'button';
+            case 'дополнительное':
+                return 'additional';
+            default :  // категория 'другое'
+                return 'other'
         }
     }
 
@@ -55,6 +70,7 @@ export class Card<T> extends Component<ICard<T>> {
     set category(value: string) {
         this.setText(this._category, value);
         // this.toggleClass(this._category, `.card__category_${ProductItem.categoryColor()}`)
+        this.toggleClass(this._category, `card__category_${this.categoryColor(value)}`)
     }
 
     get category(): string {
@@ -73,8 +89,12 @@ export class Card<T> extends Component<ICard<T>> {
         this.setImage(this._image, value, this.title)
     }
 // ------------------------------------------------------
-    set price(value: string) {
-        this.setText(this._price, value)
+    set price(value: number) {
+        if (value) {
+          this.setText(this._price, `${value} синапсов`)
+        }else {
+          this.setText(this._price, `Бесценно`)
+        }
     }
 }
 

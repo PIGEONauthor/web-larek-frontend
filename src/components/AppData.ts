@@ -2,20 +2,26 @@
 // import {dayjs, formatNumber} from "../utils/utils";
 
 import {Model} from "./base/Model";
-import {FormErrors, IAppState, /*IBasketItem,*/ IProduct, IOrder, IOrderForm/*, LotStatus*/} from "../types";
+import {FormErrors, IAppState, /*IBasketItem,*/ IProduct, IOrder, IOrderForm,/*, LotStatus*/
+IProductItem} from "../types";
+import { IEvents } from "./base/events";
 
 export type CatalogChangeEvent = {
     catalog: ProductItem[]
 };
 
-export class ProductItem extends Model<IProduct> {
+export class ProductItem {
     id: string;
     category: string;
     title: string;
     description?: string;
-    image: string;
+    image?: string;
     price: number;
     // status: LotStatus;
+
+    constructor(item: object, protected events: IEvents) {
+      Object.assign(this, item);
+    }
 
     // protected myLastBid: number = 0;
 
@@ -99,7 +105,7 @@ export class ProductItem extends Model<IProduct> {
     // }
 }
 
-export class AppState extends Model<IAppState> {
+export class AppState {
     basket: string[];
     catalog: ProductItem[];
     loading: boolean;
@@ -110,6 +116,9 @@ export class AppState extends Model<IAppState> {
     };
     preview: string | null;
     formErrors: FormErrors = {};
+    //events: IEvents;
+
+  constructor (item: object, protected events: IEvents) {}
 
     // toggleOrderedLot(id: string, isIncluded: boolean) {
     //     if (isIncluded) {
@@ -126,6 +135,11 @@ export class AppState extends Model<IAppState> {
     //     });
     // }
 
+    emitChanges(event: string, payload?: object) {
+        // Состав данных можно модифицировать
+        this.events.emit(event, payload ?? {});
+    }
+
     getTotal() {
         return this.order.items.reduce((a, c) => a + this.catalog.find(it => it.id === c).price, 0)
     }
@@ -137,7 +151,7 @@ export class AppState extends Model<IAppState> {
 
     setPreview(item: ProductItem) {
         this.preview = item.id;
-        this.emitChanges('preview:changed', item);
+        // this.emitChanges('preview:changed', item);
     }
 
     // getActiveLots(): ProductItem[] {
