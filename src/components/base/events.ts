@@ -7,16 +7,16 @@ type EmitterEvent = {
     data: unknown
 };
 
-export type EventData = {
-  event: Event,
-  element?: HTMLElement,
-  block?: HTMLElement
-};
+// export type EventData = {
+//   event: Event,
+//   element?: HTMLElement,
+//   block?: HTMLElement
+// };
 
-export type EventHandler = (args: EventData | EmitterEvent) => void;
+//  export type EventHandler = (args: EventData | EmitterEvent) => void;
 
 export interface IEvents {
-  on(event: EventName, callback: EventHandler): void;
+    on<T extends object>(event: EventName, callback: (data: T) => void): void;
   emit<T extends object>(event: string, data?: T): void;
   trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void;
 }
@@ -36,7 +36,7 @@ export class EventEmitter implements IEvents {
     /**
      * Установить обработчик на событие
      */
-    on(eventName: EventName, callback: EventHandler) {
+    on<T extends object>(eventName: EventName, callback: (event: T) => void) {
         if (!this._events.has(eventName)) {
             this._events.set(eventName, new Set<Subscriber>());
         }

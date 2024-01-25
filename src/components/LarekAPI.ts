@@ -1,15 +1,15 @@
 import { Api, ApiListResponse } from './base/api';
 import {IOrder, IOrderResult, IProduct, IProductItem} from "../types";
 
-// export interface IAuctionAPI {
-//     getLotList: () => Promise<ILot[]>;
-//     getLotItem: (id: string) => Promise<ILot>;
-//     getLotUpdate: (id: string) => Promise<LotUpdate>;
-//     placeBid(id: string, bid: IBid): Promise<LotUpdate>;
-//     orderLots: (order: IOrder) => Promise<IOrderResult>;
-// }
+export interface IAuctionAPI {
+    getProductList: () => Promise<IProductItem[]>;
+    getProductItem: (id: string) => Promise<IProductItem>;
+    // getLotUpdate: (id: string) => Promise<LotUpdate>;
+    // placeBid(id: string, bid: IBid): Promise<LotUpdate>;
+    // orderLots: (order: IOrder) => Promise<IOrderResult>;
+}
 
-export class LarekAPI extends Api /*implements IAuctionAPI*/ {
+export class LarekAPI extends Api implements IAuctionAPI {
   readonly cdn: string;
 
   constructor(cdn: string, baseUrl: string, options?: RequestInit) {
@@ -24,7 +24,16 @@ export class LarekAPI extends Api /*implements IAuctionAPI*/ {
             image: this.cdn + item.image
         }))
     );
-}
+  }
+
+  getProductItem(id: string): Promise<IProductItem> {
+    return this.get(`/product/${id}`).then(
+      (item: IProductItem) => ({
+        ...item,
+        image: this.cdn + item.image,
+      })
+    );
+  }
 
     // getLotItem(id: string): Promise<ILot> {
     //     return this.get(`/lot/${id}`).then(

@@ -151,7 +151,7 @@ export class AppState {
 
     setPreview(item: ProductItem) {
         this.preview = item.id;
-        // this.emitChanges('preview:changed', item);
+        this.emitChanges('preview:changed', item);
     }
 
     // getActiveLots(): ProductItem[] {
