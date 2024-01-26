@@ -2,7 +2,7 @@
 // import {dayjs, formatNumber} from "../utils/utils";
 
 import {Model} from "./base/Model";
-import {FormErrors, IAppState, /*IBasketItem,*/ IProduct, IOrder, IOrderForm,/*, LotStatus*/
+import {FormErrors, IAppState, /*IBasketItem, IProduct,*/ IOrder, IOrderForm,/*, LotStatus*/
 IProductItem} from "../types";
 import { IEvents } from "./base/events";
 
@@ -106,7 +106,8 @@ export class ProductItem {
 }
 
 export class AppState {
-    basket: string[];
+    // basket: string[];
+    basket: ProductItem[] = [];
     catalog: ProductItem[];
     loading: boolean;
     order: IOrder = {
@@ -140,13 +141,20 @@ export class AppState {
         this.events.emit(event, payload ?? {});
     }
 
-    getTotal() {
-        return this.order.items.reduce((a, c) => a + this.catalog.find(it => it.id === c).price, 0)
+    getTotal(): number {
+        // return this.order.items.reduce((a, c) => a + this.catalog.find(it => it.id === c).price, 0)
+        return this.basket.reduce((a, b) => { return a + b.price }, 0)
     }
 
-    setCatalog(items: IProduct[]) {
+    setCatalog(items: IProductItem[]) {
         this.catalog = items.map(item => new ProductItem(item, this.events));
         this.emitChanges('items:changed', { catalog: this.catalog });
+    }
+
+    setBasket(item: ProductItem) {
+        // const basketItem = new ProductItem(item, this.events);
+        this.basket.push(item);
+        this.emitChanges('basket:changed');
     }
 
     setPreview(item: ProductItem) {

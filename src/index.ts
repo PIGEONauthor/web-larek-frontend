@@ -8,7 +8,7 @@ import {CDN_URL, API_URL} from './utils/constants';
 import {cloneTemplate, createElement, ensureElement} from "./utils/utils";
 import {Page} from './components/Page';
 import {CatalogChangeEvent, ProductItem, AppState } from './components/AppData';
-import { Card } from './components/Card';
+import { Card, CatalogItem, BasketCard } from './components/Card';
 import { Modal } from './components/common/Modal';
 import { Basket } from './components/common/Basket';
 
@@ -18,8 +18,9 @@ const api = new LarekAPI(CDN_URL, API_URL);
 // ШАБЛОНЫ
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
-const cardBasketTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
 const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
+// темплейт товара в корзине
+const cardBasketTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
 const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
 const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 
@@ -32,10 +33,10 @@ const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 
-// УСТАНОВКА КОЛБЭКА ПРИ ИЗМЕНЕНИИ В КАТАЛОГЕ
+// УСТАНОВКА КОЛБЭКА ДЛЯ ИЗМЕНЕНИЯ КАТАЛОГА
 events.on/*<CatalogChangeEvent>*/('items:changed', () => {
     page.catalog = appData.catalog.map(item => {
-        const card = new Card('card', cloneTemplate(cardCatalogTemplate), {
+        const card = new CatalogItem(cloneTemplate(cardCatalogTemplate), {
             onClick: () => events.emit('card:select', item)
         });
         return card.render({
@@ -57,7 +58,9 @@ events.on('card:select', (item: ProductItem) => {
 // меняем контент для модального окна ПРЕДПРОСМОТРА
 events.on('preview:changed', (item: ProductItem) => {
     const showItem = (item: ProductItem) => {
-        const card = new Card('card', cloneTemplate(cardPreviewTemplate));
+        const card = new CatalogItem(cloneTemplate(cardPreviewTemplate), {
+            onClick: () => events.emit('basket:add', item),  // для добавления в корзину
+        });
         modal.render({
             content: card.render({
                 category: item.category,
@@ -92,17 +95,36 @@ events.on('modal:close', () => {
     page.locked = false;
 });
 
-// 
-// events.on('bids:open', () => {
-//     modal.render({
-//         content: createElement<HTMLElement>('div', {}, [
-//             tabs.render({
-//                 selected: 'active'
-//             }),
-//             bids.render()
-//         ])
-//     });
-// });
+
+// ОТКРЫТИЕ КОРЗИНЫ
+events.on('basket:open', () => {
+    modal.render({
+        content: createElement<HTMLElement>('div', {}, [
+            basket.render()
+        ])
+    });
+});
+
+// ИЗМЕНЕНИЕ КОРЗИНЫ
+events.on('basket:changed', () => {
+    basket.items = appData.basket.map((item, i) => {
+        const basketItem = new BasketCard(cloneTemplate(cardBasketTemplate));
+        return basketItem.render({
+            itemIndex: i+1,
+            title: item.title,
+            price: item.price
+        })
+    })
+    // посчитать сумму заказа и установить в корзину
+    basket.total = appData.getTotal()
+})
+
+// ДОБАВЛЕНИЕ В КОРЗИНУ
+events.on('basket:add', (item: ProductItem) => {
+    appData.setBasket(item);
+    page.counter = appData.basket.length;
+    modal.close()
+})
 
 // получаем данные с сервера
 api.getProductList()

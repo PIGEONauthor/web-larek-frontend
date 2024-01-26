@@ -17,7 +17,7 @@ export interface IProductItem {
     price: number;
 }
 
-export type IProduct = IProductItem /*& IAuction*/;
+//export type IProduct = IProductItem /*& IAuction*/;
 
 // export type LotUpdate = Pick<IProduct, 'id' | 'datetime' | 'status' | 'price' | 'history'>;
 
@@ -26,7 +26,7 @@ export type IProduct = IProductItem /*& IAuction*/;
 // };
 
 export interface IAppState {
-    catalog: IProduct[];
+    catalog: IProductItem[];
     basket: string[];
     preview: string | null;
     order: IOrder | null;
