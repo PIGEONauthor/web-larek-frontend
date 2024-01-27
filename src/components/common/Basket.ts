@@ -22,7 +22,7 @@ export class Basket extends Component<IBasketView> {
 
         if (this._button) {
             this._button.addEventListener('click', () => {
-                events.emit('order:open');
+                events.emit('payment:open');
             });
         }
 
@@ -39,8 +39,16 @@ export class Basket extends Component<IBasketView> {
         }
     }
 
-    set selected(items: string[]) {
-        if (items.length) {
+    // set selected(items: string[]) {
+    //     if (items.length) {
+    //         this.setDisabled(this._button, false);
+    //     } else {
+    //         this.setDisabled(this._button, true);
+    //     }
+    // }
+
+    set selected(length: number) {
+        if (length) {
             this.setDisabled(this._button, false);
         } else {
             this.setDisabled(this._button, true);

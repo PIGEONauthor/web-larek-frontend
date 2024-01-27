@@ -113,6 +113,7 @@ export class AppState {
     order: IOrder = {
         email: '',
         phone: '',
+        address: '',
         items: []
     };
     preview: string | null;
@@ -154,6 +155,11 @@ export class AppState {
     setBasket(item: ProductItem) {
         // const basketItem = new ProductItem(item, this.events);
         this.basket.push(item);
+        this.emitChanges('basket:changed');
+    }
+
+    removeBasket(item: ProductItem) {
+        this.basket = this.basket.filter(el => el.id != item.id);
         this.emitChanges('basket:changed');
     }
 

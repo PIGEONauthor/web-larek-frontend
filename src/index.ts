@@ -11,6 +11,7 @@ import {CatalogChangeEvent, ProductItem, AppState } from './components/AppData';
 import { Card, CatalogItem, BasketCard } from './components/Card';
 import { Modal } from './components/common/Modal';
 import { Basket } from './components/common/Basket';
+import { Payment } from './components/Payment';
 
 const events = new EventEmitter();
 const api = new LarekAPI(CDN_URL, API_URL);
@@ -32,6 +33,9 @@ const page = new Page(document.body, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
 const basket = new Basket(cloneTemplate(basketTemplate), events);
+
+const payment = new Payment(cloneTemplate(orderTemplate), events);
+//const contacts = new Contacts(cloneTemplate(contactsTemplate), events);
 
 // УСТАНОВКА КОЛБЭКА ДЛЯ ИЗМЕНЕНИЯ КАТАЛОГА
 events.on/*<CatalogChangeEvent>*/('items:changed', () => {
@@ -103,20 +107,27 @@ events.on('basket:open', () => {
             basket.render()
         ])
     });
+
 });
 
 // ИЗМЕНЕНИЕ КОРЗИНЫ
 events.on('basket:changed', () => {
+    // включение/отключение кнопки ОФОРМИТЬ
+    basket.selected = appData.basket.length;
+
     basket.items = appData.basket.map((item, i) => {
-        const basketItem = new BasketCard(cloneTemplate(cardBasketTemplate));
+        const basketItem = new BasketCard(cloneTemplate(cardBasketTemplate), {
+            onClick: () => events.emit('basket:remove', item), // удаление товара из корзины
+        });
         return basketItem.render({
             itemIndex: i+1,
             title: item.title,
             price: item.price
         })
     })
+
     // посчитать сумму заказа и установить в корзину
-    basket.total = appData.getTotal()
+    basket.total = appData.getTotal();
 })
 
 // ДОБАВЛЕНИЕ В КОРЗИНУ
@@ -125,6 +136,25 @@ events.on('basket:add', (item: ProductItem) => {
     page.counter = appData.basket.length;
     modal.close()
 })
+
+// УДАЛИТЬ ИЗ КОРЗИНЫ
+events.on('basket:remove', (item: ProductItem) => {
+    appData.removeBasket(item);
+    page.counter = appData.basket.length;
+})
+
+// ОТКРЫТИЕ ФОРМЫ ОПЛАТЫ
+events.on('payment:open', () => {
+    modal.render({
+        content: payment.render({
+            // phone: '',
+            // email: '',
+            address: '',
+            valid: false,
+            errors: []
+        })
+    });
+});
 
 // получаем данные с сервера
 api.getProductList()

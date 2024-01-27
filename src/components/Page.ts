@@ -25,6 +25,7 @@ export class Page extends Component<IPage> {
 
         this._basket.addEventListener('click', () => {
             // this.events.emit('bids:open');
+            this.events.emit('basket:changed');
             this.events.emit('basket:open');
         });
     }
