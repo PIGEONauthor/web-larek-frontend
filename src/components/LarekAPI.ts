@@ -1,5 +1,5 @@
 import { Api, ApiListResponse } from './base/api';
-import {/*IOrder,*/ IOrderResult, /*IProduct,*/ IProductItem} from "../types";
+import {IOrder, IOrderResult, /*IProduct,*/ IProductItem} from "../types";
 
 export interface IAuctionAPI {
     getProductList: () => Promise<IProductItem[]>;
@@ -65,7 +65,7 @@ export class LarekAPI extends Api implements IAuctionAPI {
     //     );
     // }
 
-    orderProducts(order: IProductItem): Promise<IOrderResult> {
+    orderProducts(order: IOrder): Promise<IOrderResult> {
         return this.post('/order', order).then(
             (data: IOrderResult) => data
         );

@@ -9,7 +9,7 @@ export type ButtonActions = {
 
 export class Contacts extends Form<IOrderForm> {
     // protected _buttons: HTMLButtonElement[];
-    protected _submitButton: HTMLElement;
+    // protected _submitButton: HTMLElement;
     protected _email: HTMLInputElement;
     protected _phone: HTMLInputElement;
 

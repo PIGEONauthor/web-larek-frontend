@@ -9,7 +9,6 @@ export type ButtonActions = {
 
 export class Payment extends Form<IOrderForm> {
     protected _buttons: HTMLButtonElement[];
-    // protected _submitButton: HTMLElement;
     protected _address: HTMLInputElement;
 
     constructor(container: HTMLFormElement, events: IEvents, actions?: ButtonActions) {
@@ -17,7 +16,6 @@ export class Payment extends Form<IOrderForm> {
 
         this._buttons = ensureAllElements<HTMLButtonElement>(`.button_alt`, container);
         this._address = this.container.querySelector(`.form__input`);
-        // this._submitButton = this.container.querySelector(`.order__button`);
 
         this._buttons.forEach(button => {
             button.addEventListener('click', (evt) => {
@@ -28,9 +26,6 @@ export class Payment extends Form<IOrderForm> {
         })
 
         this._address.addEventListener('input', (evt) => {
-            // const target = evt.target as HTMLInputElement;
-            // this.enable = target.value;
-            // console.log('input', target.value);
             this.events.emit('payment:changed');
         })
 
@@ -42,6 +37,10 @@ export class Payment extends Form<IOrderForm> {
     // set address(value: string) {
     //     this._address.value = value;
     // }
+
+    set address(value: string) {
+        this._address.value = value;
+    }
 
     getAddress() {
         return !!this._address.value;

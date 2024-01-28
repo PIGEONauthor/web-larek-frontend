@@ -35,7 +35,11 @@ const appData = new AppState({}, events);
 const page = new Page(document.body, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
-const basket = new Basket(cloneTemplate(basketTemplate), events);
+const basket = new Basket(cloneTemplate(basketTemplate), events, {
+    onClick: () => {
+        events.emit('payment:open')
+    }
+});
 
 const payment = new Payment(cloneTemplate(orderTemplate), events, {
     onClick: () => {
@@ -45,7 +49,10 @@ const payment = new Payment(cloneTemplate(orderTemplate), events, {
 });
 const contacts = new Contacts(cloneTemplate(contactsTemplate), events, {
     onClick: () => {
-        appData.setOrderField('total', `${appData.getTotal()}`);
+        appData.setOrderField('total', appData.getTotal());
+        appData.basket.forEach(order => {
+            appData.setOrderField('items', order.id);
+        });
         console.log(appData.order)
         events.emit('success:open')
     }
@@ -163,7 +170,7 @@ events.on('basket:remove', (item: ProductItem) => {
 // ОТКРЫТИЕ ФОРМЫ ОПЛАТЫ
 events.on('payment:open', () => {
     // убрать выбор способа оплаты
-    // payment.unselectAll();
+    payment.unselectAll();
     
     modal.render({
         content: payment.render({
@@ -173,19 +180,17 @@ events.on('payment:open', () => {
         })
     });
     // возможно нужно будет удалить
-    events.emit('payment:changed', events)
+    // events.emit('payment:changed', events)
 });
 
 // ИЗМЕНЕНИЕ СОСТОЯНИЯ ФОРМЫ ОПЛАТЫ
 events.on ('payment:changed', () => {
     payment.valid = payment.getAddress() && payment.isSelected();
-    // const address = errors;
-    // payment.errors = Object.values(address).filter(i => !!i).join('; ');
 })
 
 // ОТКРЫТИЕ ФОРМЫ С КОНТАКТНЫМИ ДАННЫМИ
 events.on('contacts:open', () => {
-    events.emit('contacts:changed', events)
+    // events.emit('contacts:changed', events)
 
     modal.render({
         content: contacts.render({
@@ -204,48 +209,34 @@ events.on ('contacts:changed', () => {
 })
 
 // ОТКРЫТИЕ УСПЕШНОГО ЗАКАЗА
-// events.on('success:submit', () => {
-//     api.orderProducts(appData.order)
-//         .then((result) => {
-//             const success = new Success(cloneTemplate(successTemplate), {
-//                 onClick: () => {
-//                     modal.close();
-//                     // appData.clearBasket();
-//                     // events.emit('auction:changed');
-//                 }
-//             });
-
-//             modal.render({
-//                 content: success.render({})
-//             });
-//         })
-//         .catch(err => {
-//             console.error(err);
-//         });
-// });
-
 events.on('success:open', () => {
-    const success = new Success(cloneTemplate(successTemplate), {
-        onClick: () => {
-            modal.close();
-            appData.clearBasket();
-            events.emit('basket:changed');
-        }
-    });
-    modal.render({
-        content: success.render({
-            description: appData.getTotal(),
+    api.orderProducts(appData.order)
+        .then((result) => {
+            const success = new Success(cloneTemplate(successTemplate), {
+                onClick: () => {
+                    appData.clearBasket();
+                    events.emit('basket:changed');
+                    events.emit('payment:changed');
+                    modal.close();
+                }
+            });
+
+            modal.render({
+                content: success.render({
+                    description: appData.getTotal()
+                })
+            });
         })
-    });
+        .catch(err => {
+            console.error(err);
+        });
 });
+
 
 // Изменилось состояние валидации формы
 events.on('formErrors:change', (errors: Partial<IOrderForm>) => {
     const { email, phone, address } = errors;
-    // console.log(errors)
-    // payment.valid = (!email && !phone) || !address;
     payment.errors = contacts.errors = Object.values({email, phone, address}).filter(i => !!i).join('; ');
-    // contacts.errors = Object.values({email, phone}).filter(i => !!i).join('; ');
 });
 
 // Изменилось одно из полей
@@ -261,35 +252,8 @@ events.on(/^contacts\..*:change/, (data: { field: keyof IOrderForm, value: strin
 // получаем данные с сервера
 api.getProductList()
   .then(data => {
-      console.log(data);   // -----------------УДАЛИТЬ--------------------
       appData.setCatalog(data);
-    //   console.log('Catalog:', appData.catalog)
     })
   .catch(err => {
     console.error('!!!error: ', err);
 });
-
-
-// -------------------------------------УДАЛИТЬ---------------------------------------
-// function getCardsInfo() {
-// return fetch('https://larek-api.nomoreparties.co/api/weblarek/product', {
-//   method: 'GET',
-//   headers: {
-//     'Content-Type': 'application/json'
-//   }
-// }).then(resp => resp.json())
-// }
-  
-// getCardsInfo().then(data => {
-//   console.log(data.items);
-//   data.items.map((item: object) => {
-//     console.log(item);
-//   })
-// })
-
-// api.getProductList()
-//   .then(data => {
-//     data.map(item => {
-//         console.log(item)
-//     })
-//   })

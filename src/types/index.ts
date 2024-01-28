@@ -38,7 +38,13 @@ export interface IOrderForm {
     email?: string;
     phone?: string;
     address?: string;
-    total?: string;
+    total?: number;
+    items: string[];
+}
+
+export interface IOrder extends IOrderForm {
+    // total: number;
+    // items: string[]
 }
 
 export interface IOrder extends IOrderForm {

@@ -8,25 +8,33 @@ interface IBasketView {
     enable: number;
 }
 
+interface IFormActions {
+    onClick: (event: MouseEvent) => void;
+}
+
 export class Basket extends Component<IBasketView> {
     protected _list: HTMLElement;
     protected _total: HTMLElement;
     protected _button: HTMLElement;
 
-    constructor(container: HTMLElement, protected events: EventEmitter) {
+    constructor(container: HTMLElement, protected events: EventEmitter, actions?: IFormActions) {
         super(container);
 
         this._list = ensureElement<HTMLElement>('.basket__list', this.container);
         this._total = this.container.querySelector('.basket__price');
         this._button = this.container.querySelector('.basket__button');
 
-        if (this._button) {
-            this._button.addEventListener('click', () => {
-                this.events.emit('payment:open');
-            });
-        }
+        // if (this._button) {
+        //     this._button.addEventListener('click', () => {
+        //         this.events.emit('payment:open');
+        //     });
+        // }
 
         this.items = [];
+        
+        if (actions?.onClick) {
+            this._button.addEventListener('click', actions.onClick);
+        }
     }
 
     set items(items: HTMLElement[]) {
