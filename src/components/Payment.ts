@@ -1,22 +1,76 @@
 import {Form} from "./common/Form";
 import {IOrderForm} from "../types";
 import {EventEmitter, IEvents} from "./base/events";
-import {ensureElement} from "../utils/utils";
+import {ensureElement, ensureAllElements} from "../utils/utils";
+
+export type ButtonActions = {
+    onClick: (event: MouseEvent) => void
+}
 
 export class Payment extends Form<IOrderForm> {
-    constructor(container: HTMLFormElement, events: IEvents) {
-        super(container, events);
+    protected _buttons: HTMLButtonElement[];
+    // protected _submitButton: HTMLElement;
+    protected _address: HTMLInputElement;
+
+    constructor(container: HTMLFormElement, events: IEvents, actions?: ButtonActions) {
+        super(container, events, actions);
+
+        this._buttons = ensureAllElements<HTMLButtonElement>(`.button_alt`, container);
+        this._address = this.container.querySelector(`.form__input`);
+        // this._submitButton = this.container.querySelector(`.order__button`);
+
+        this._buttons.forEach(button => {
+            button.addEventListener('click', (evt) => {
+                const target = evt.target as HTMLButtonElement;
+                this.selected(target.name);
+                this.events.emit('payment:changed');
+            })
+        })
+
+        this._address.addEventListener('input', (evt) => {
+            // const target = evt.target as HTMLInputElement;
+            // this.enable = target.value;
+            // console.log('input', target.value);
+            this.events.emit('payment:changed');
+        })
+
+        // this._submit.addEventListener('click', () => {
+        //     this.events.emit('contacts:open', this.events);
+        // })
     }
 
-    set phone(value: string) {
-        (this.container.elements.namedItem('phone') as HTMLInputElement).value = value;
+    // set address(value: string) {
+    //     this._address.value = value;
+    // }
+
+    getAddress() {
+        return !!this._address.value;
     }
 
-    set email(value: string) {
-        (this.container.elements.namedItem('email') as HTMLInputElement).value = value;
+    selected(name: string) {
+        this._buttons.forEach(button => {
+            this.toggleClass(button, 'button_alt-active', button.name === name);
+        });
     }
 
-    set address(value: string) {
-        (this.container.elements.namedItem('address') as HTMLInputElement).value = value;
+    unselectAll() {
+        this._buttons.forEach(button => {
+            this.removeClass(button, 'button_alt-active');
+        })
     }
+
+    // выбран ли способ оплаты
+    isSelected() {
+        return (!!this.container.querySelector('.button_alt-active'));
+    }
+
+    getType() {
+        const button = this.container.querySelector('.button_alt-active') as HTMLButtonElement;
+        if (button.name === 'card') {
+            return 'online';
+        }else {
+            return 'offline';
+        }
+    }
+
 }

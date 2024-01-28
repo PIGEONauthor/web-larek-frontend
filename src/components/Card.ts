@@ -141,10 +141,6 @@ export class BasketCard extends Card<IBasketCard> {
         // this._title = ensureElement<HTMLElement>(`.card-basket__title`, container);
         // this._price = ensureElement<HTMLElement>(`.card-basket__price`, container);
         this._button = ensureElement<HTMLButtonElement>(`.basket__item-delete`, container);
-
-        this._button.addEventListener('click', () => {
-          //
-        })
     }
 
     set itemIndex(value: number) {

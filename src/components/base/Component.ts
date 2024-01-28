@@ -14,6 +14,11 @@ export abstract class Component<T> {
     toggleClass(element: HTMLElement, className: string, force?: boolean) {
         element.classList.toggle(className, force);
     }
+    
+    // Удалить класс
+    removeClass(element: HTMLElement, className: string) {
+        element.classList.remove(className);
+    }
 
     // Установить текстовое содержимое
     protected setText(element: HTMLElement, value: unknown) {

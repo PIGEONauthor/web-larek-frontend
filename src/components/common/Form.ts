@@ -7,11 +7,15 @@ interface IFormState {
     errors: string[];
 }
 
+interface IFormActions {
+    onClick: (event: MouseEvent) => void;
+}
+
 export class Form<T> extends Component<IFormState> {
-    protected _submit: HTMLButtonElement;
+    protected _submit?: HTMLButtonElement;
     protected _errors: HTMLElement;
 
-    constructor(protected container: HTMLFormElement, protected events: IEvents) {
+    constructor(protected container: HTMLFormElement, protected events?: IEvents, actions?: IFormActions) {
         super(container);
 
         this._submit = ensureElement<HTMLButtonElement>('button[type=submit]', this.container);
@@ -28,6 +32,10 @@ export class Form<T> extends Component<IFormState> {
             e.preventDefault();
             this.events.emit(`${this.container.name}:submit`);
         });
+
+        if (actions?.onClick) {
+            this._submit.addEventListener('click', actions.onClick);
+        }
     }
 
     protected onInputChange(field: keyof T, value: string) {

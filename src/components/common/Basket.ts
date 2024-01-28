@@ -5,7 +5,7 @@ import {EventEmitter} from "../base/events";
 interface IBasketView {
     items: HTMLElement[];
     total: number;
-    selected: string[];
+    enable: number;
 }
 
 export class Basket extends Component<IBasketView> {
@@ -22,7 +22,7 @@ export class Basket extends Component<IBasketView> {
 
         if (this._button) {
             this._button.addEventListener('click', () => {
-                events.emit('payment:open');
+                this.events.emit('payment:open');
             });
         }
 
@@ -47,7 +47,7 @@ export class Basket extends Component<IBasketView> {
     //     }
     // }
 
-    set selected(length: number) {
+    set enable(length: number) {
         if (length) {
             this.setDisabled(this._button, false);
         } else {
@@ -57,5 +57,13 @@ export class Basket extends Component<IBasketView> {
 
     set total(total: number) {
         this.setText(this._total, `${total} синапсов`);
+    }
+
+    // get total(): string {
+    //     return this._total.textContent || '';
+    // }
+
+    getTotal() {
+        return this._total.textContent || '';
     }
 }

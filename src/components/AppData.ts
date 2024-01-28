@@ -2,7 +2,7 @@
 // import {dayjs, formatNumber} from "../utils/utils";
 
 import {Model} from "./base/Model";
-import {FormErrors, IAppState, /*IBasketItem, IProduct,*/ IOrder, IOrderForm,/*, LotStatus*/
+import {FormErrors, IAppState, /*IBasketItem, IProduct, IOrder,*/ IOrderForm,/*, LotStatus*/
 IProductItem} from "../types";
 import { IEvents } from "./base/events";
 
@@ -110,11 +110,13 @@ export class AppState {
     basket: ProductItem[] = [];
     catalog: ProductItem[];
     loading: boolean;
-    order: IOrder = {
-        email: '',
-        phone: '',
+    order: IOrderForm = {
+        payment: '',
+        email: '-',
+        phone: '-',
         address: '',
-        items: []
+        total: '',
+        // items: []
     };
     preview: string | null;
     formErrors: FormErrors = {};
@@ -128,13 +130,6 @@ export class AppState {
     //     } else {
     //         this.order.items = _.without(this.order.items, id);
     //     }
-    // }
-
-    // clearBasket() {
-    //     this.order.items.forEach(id => {
-    //         this.toggleOrderedLot(id, false);
-    //         this.catalog.find(it => it.id === id).clearBid();
-    //     });
     // }
 
     emitChanges(event: string, payload?: object) {
@@ -163,6 +158,10 @@ export class AppState {
         this.emitChanges('basket:changed');
     }
 
+    clearBasket() {
+        this.basket = [];
+    }
+
     setPreview(item: ProductItem) {
         this.preview = item.id;
         this.emitChanges('preview:changed', item);
@@ -188,6 +187,9 @@ export class AppState {
 
     validateOrder() {
         const errors: typeof this.formErrors = {};
+        if (!this.order.address) {
+            errors.address = 'Неоходимо указать адрес';
+        }
         if (!this.order.email) {
             errors.email = 'Необходимо указать email';
         }

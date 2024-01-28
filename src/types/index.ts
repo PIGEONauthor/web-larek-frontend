@@ -29,21 +29,23 @@ export interface IAppState {
     catalog: IProductItem[];
     basket: string[];
     preview: string | null;
-    order: IOrder | null;
+    order: IOrderForm | null;
     loading: boolean;
 }
 
 export interface IOrderForm {
-    email: string;
-    phone: string;
-    address: string;
+    payment?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+    total?: string;
 }
 
 export interface IOrder extends IOrderForm {
     items: string[]
 }
 
-export type FormErrors = Partial<Record<keyof IOrder, string>>;
+export type FormErrors = Partial<Record<keyof IOrderForm, string>>;
 
 // export interface IBid {
 //     price: number

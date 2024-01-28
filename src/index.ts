@@ -2,6 +2,7 @@
 
 import './scss/styles.scss';
 
+import {IOrderForm} from "./types";
 import {EventEmitter} from './components/base/events';
 import {LarekAPI} from './components/LarekAPI';
 import {CDN_URL, API_URL} from './utils/constants';
@@ -12,6 +13,8 @@ import { Card, CatalogItem, BasketCard } from './components/Card';
 import { Modal } from './components/common/Modal';
 import { Basket } from './components/common/Basket';
 import { Payment } from './components/Payment';
+import { Contacts } from './components/Contacts';
+import { Success } from './components/common/Success';
 
 const events = new EventEmitter();
 const api = new LarekAPI(CDN_URL, API_URL);
@@ -20,10 +23,10 @@ const api = new LarekAPI(CDN_URL, API_URL);
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
 const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
-// темплейт товара в корзине
 const cardBasketTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
 const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
 const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
+const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 
 // ХРАНИЛИЩЕ ДАННЫХ ПРИЛОЖЕНИЯ
 const appData = new AppState({}, events);
@@ -34,8 +37,20 @@ const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 
-const payment = new Payment(cloneTemplate(orderTemplate), events);
-//const contacts = new Contacts(cloneTemplate(contactsTemplate), events);
+const payment = new Payment(cloneTemplate(orderTemplate), events, {
+    onClick: () => {
+        appData.setOrderField('payment', payment.getType());
+        events.emit('contacts:open')
+    }
+});
+const contacts = new Contacts(cloneTemplate(contactsTemplate), events, {
+    onClick: () => {
+        appData.setOrderField('total', `${appData.getTotal()}`);
+        console.log(appData.order)
+        events.emit('success:open')
+    }
+});
+//const success = new Success(cloneTemplate(successTemplate), events);
 
 // УСТАНОВКА КОЛБЭКА ДЛЯ ИЗМЕНЕНИЯ КАТАЛОГА
 events.on/*<CatalogChangeEvent>*/('items:changed', () => {
@@ -110,10 +125,12 @@ events.on('basket:open', () => {
 
 });
 
-// ИЗМЕНЕНИЕ КОРЗИНЫ
+// ИЗМЕНЕНИЕ СОСТОЯНИЯ КОРЗИНЫ
 events.on('basket:changed', () => {
     // включение/отключение кнопки ОФОРМИТЬ
-    basket.selected = appData.basket.length;
+    basket.enable = appData.basket.length;
+    // пересчитать количество товара в корзине
+    page.counter = appData.basket.length;
 
     basket.items = appData.basket.map((item, i) => {
         const basketItem = new BasketCard(cloneTemplate(cardBasketTemplate), {
@@ -133,29 +150,114 @@ events.on('basket:changed', () => {
 // ДОБАВЛЕНИЕ В КОРЗИНУ
 events.on('basket:add', (item: ProductItem) => {
     appData.setBasket(item);
-    page.counter = appData.basket.length;
+    // page.counter = appData.basket.length;
     modal.close()
 })
 
 // УДАЛИТЬ ИЗ КОРЗИНЫ
 events.on('basket:remove', (item: ProductItem) => {
     appData.removeBasket(item);
-    page.counter = appData.basket.length;
+    // page.counter = appData.basket.length;
 })
 
 // ОТКРЫТИЕ ФОРМЫ ОПЛАТЫ
 events.on('payment:open', () => {
+    // убрать выбор способа оплаты
+    // payment.unselectAll();
+    
     modal.render({
         content: payment.render({
-            // phone: '',
-            // email: '',
             address: '',
             valid: false,
-            errors: []
+            errors: [],
+        })
+    });
+    // возможно нужно будет удалить
+    events.emit('payment:changed', events)
+});
+
+// ИЗМЕНЕНИЕ СОСТОЯНИЯ ФОРМЫ ОПЛАТЫ
+events.on ('payment:changed', () => {
+    payment.valid = payment.getAddress() && payment.isSelected();
+    // const address = errors;
+    // payment.errors = Object.values(address).filter(i => !!i).join('; ');
+})
+
+// ОТКРЫТИЕ ФОРМЫ С КОНТАКТНЫМИ ДАННЫМИ
+events.on('contacts:open', () => {
+    events.emit('contacts:changed', events)
+
+    modal.render({
+        content: contacts.render({
+            email: '',
+            phone: '',
+            valid: false,
+            errors: [],
+        })
+    });
+
+});
+
+// ИЗМЕНЕНИЕ СОСТОЯНИЯ ФОРМЫ С КОНТАКТНЫМИ ДАННЫМИ
+events.on ('contacts:changed', () => {
+    contacts.valid = contacts.getEmail() && contacts.getPhone();
+})
+
+// ОТКРЫТИЕ УСПЕШНОГО ЗАКАЗА
+// events.on('success:submit', () => {
+//     api.orderProducts(appData.order)
+//         .then((result) => {
+//             const success = new Success(cloneTemplate(successTemplate), {
+//                 onClick: () => {
+//                     modal.close();
+//                     // appData.clearBasket();
+//                     // events.emit('auction:changed');
+//                 }
+//             });
+
+//             modal.render({
+//                 content: success.render({})
+//             });
+//         })
+//         .catch(err => {
+//             console.error(err);
+//         });
+// });
+
+events.on('success:open', () => {
+    const success = new Success(cloneTemplate(successTemplate), {
+        onClick: () => {
+            modal.close();
+            appData.clearBasket();
+            events.emit('basket:changed');
+        }
+    });
+    modal.render({
+        content: success.render({
+            description: appData.getTotal(),
         })
     });
 });
 
+// Изменилось состояние валидации формы
+events.on('formErrors:change', (errors: Partial<IOrderForm>) => {
+    const { email, phone, address } = errors;
+    // console.log(errors)
+    // payment.valid = (!email && !phone) || !address;
+    payment.errors = contacts.errors = Object.values({email, phone, address}).filter(i => !!i).join('; ');
+    // contacts.errors = Object.values({email, phone}).filter(i => !!i).join('; ');
+});
+
+// Изменилось одно из полей
+events.on(/^order\..*:change/, (data: { field: keyof IOrderForm, value: string }) => {
+    appData.setOrderField(data.field, data.value);
+});
+events.on(/^contacts\..*:change/, (data: { field: keyof IOrderForm, value: string }) => {
+    appData.setOrderField(data.field, data.value);
+});
+
+
+// ----------------------------API----------------------------------
 // получаем данные с сервера
 api.getProductList()
   .then(data => {
