@@ -1,6 +1,7 @@
+// ▷▷▷ IMPORT
 import {Component} from "../base/Component";
-import {cloneTemplate, createElement, ensureElement/*, formatNumber*/} from "../../utils/utils";
 import {EventEmitter} from "../base/events";
+import {createElement, ensureElement} from "../../utils/utils";
 
 interface IBasketView {
     items: HTMLElement[];
@@ -24,12 +25,6 @@ export class Basket extends Component<IBasketView> {
         this._total = this.container.querySelector('.basket__price');
         this._button = this.container.querySelector('.basket__button');
 
-        // if (this._button) {
-        //     this._button.addEventListener('click', () => {
-        //         this.events.emit('payment:open');
-        //     });
-        // }
-
         this.items = [];
         
         if (actions?.onClick) {
@@ -47,14 +42,6 @@ export class Basket extends Component<IBasketView> {
         }
     }
 
-    // set selected(items: string[]) {
-    //     if (items.length) {
-    //         this.setDisabled(this._button, false);
-    //     } else {
-    //         this.setDisabled(this._button, true);
-    //     }
-    // }
-
     set enable(length: number) {
         if (length) {
             this.setDisabled(this._button, false);
@@ -65,13 +52,5 @@ export class Basket extends Component<IBasketView> {
 
     set total(total: number) {
         this.setText(this._total, `${total} синапсов`);
-    }
-
-    // get total(): string {
-    //     return this._total.textContent || '';
-    // }
-
-    getTotal() {
-        return this._total.textContent || '';
     }
 }

@@ -1,21 +1,18 @@
-import {Form} from "./common/Form";
-import {IOrderForm} from "../types";
-import {EventEmitter, IEvents} from "./base/events";
-import {ensureElement, ensureAllElements} from "../utils/utils";
-
-export type ButtonActions = {
-    onClick: (event: MouseEvent) => void
-}
+// ▷▷▷ IMPORT
+import { Form } from "./common/Form";
+import { IEvents } from "./base/events";
+import { IOrderForm, IActions } from "../types";
+import { ensureElement, ensureAllElements } from "../utils/utils";
 
 export class Payment extends Form<IOrderForm> {
     protected _buttons: HTMLButtonElement[];
     protected _address: HTMLInputElement;
 
-    constructor(container: HTMLFormElement, events: IEvents, actions?: ButtonActions) {
+    constructor(container: HTMLFormElement, events: IEvents, actions?: IActions) {
         super(container, events, actions);
 
         this._buttons = ensureAllElements<HTMLButtonElement>(`.button_alt`, container);
-        this._address = this.container.querySelector(`.form__input`);
+        this._address = ensureElement<HTMLInputElement>(`.form__input`, container);
 
         this._buttons.forEach(button => {
             button.addEventListener('click', (evt) => {
@@ -28,20 +25,8 @@ export class Payment extends Form<IOrderForm> {
         this._address.addEventListener('input', (evt) => {
             this.events.emit('payment:changed');
         })
-
-        // this._submit.addEventListener('click', () => {
-        //     this.events.emit('contacts:open', this.events);
-        // })
     }
-
-    // set address(value: string) {
-    //     this._address.value = value;
-    // }
-
-    set address(value: string) {
-        this._address.value = value;
-    }
-
+    // проверка, заполнено ли поле адреса
     getAddress() {
         return !!this._address.value;
     }
@@ -51,18 +36,17 @@ export class Payment extends Form<IOrderForm> {
             this.toggleClass(button, 'button_alt-active', button.name === name);
         });
     }
-
+    // убрать выборку со способов оплаты
     unselectAll() {
         this._buttons.forEach(button => {
             this.removeClass(button, 'button_alt-active');
         })
     }
-
-    // выбран ли способ оплаты
+    // проверка, выбран ли способ оплаты
     isSelected() {
         return (!!this.container.querySelector('.button_alt-active'));
     }
-
+    // получить способ оплаты
     getType() {
         const button = this.container.querySelector('.button_alt-active') as HTMLButtonElement;
         if (button.name === 'card') {

@@ -1,6 +1,8 @@
-import {Component} from "./base/Component";
-import {IEvents} from "./base/events";
-import {ensureElement} from "../utils/utils";
+// ▷▷▷ IMPORT
+import { IActions } from "../types";
+import { IEvents } from "./base/events";
+import { Component } from "./base/Component";
+import { ensureElement } from "../utils/utils";
 
 interface IPage {
     counter: number;
@@ -14,8 +16,7 @@ export class Page extends Component<IPage> {
     protected _wrapper: HTMLElement;
     protected _basket: HTMLElement;
 
-
-    constructor(container: HTMLElement, protected events: IEvents) {
+    constructor(container: HTMLElement, protected events: IEvents, actions?: IActions) {
         super(container);
 
         this._counter = ensureElement<HTMLElement>('.header__basket-counter');
@@ -23,11 +24,9 @@ export class Page extends Component<IPage> {
         this._wrapper = ensureElement<HTMLElement>('.page__wrapper');
         this._basket = ensureElement<HTMLElement>('.header__basket');
 
-        this._basket.addEventListener('click', () => {
-            // this.events.emit('bids:open');
-            this.events.emit('basket:changed');
-            this.events.emit('basket:open');
-        });
+        if (actions?.onClick) {
+            this._basket.addEventListener('click', actions.onClick);
+        }
     }
 
     set counter(value: number) {

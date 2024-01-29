@@ -1,20 +1,13 @@
-import {Component} from "../base/Component";
-import {ensureElement} from "../../utils/utils";
-
-interface ISuccess {
-    // total: number;
-    description: number;
-}
-
-interface ISuccessActions {
-    onClick: () => void;
-}
+// ▷▷▷ IMPORT
+import { ISuccess, IActions } from "../types";
+import { Component } from "./base/Component";
+import { ensureElement } from "../utils/utils";
 
 export class Success extends Component<ISuccess> {
-    protected _description?: HTMLElement;
+    protected _description: HTMLElement;
     protected _close: HTMLButtonElement;
 
-    constructor(container: HTMLElement, actions?: ISuccessActions) {
+    constructor(container: HTMLElement, actions?: IActions) {
         super(container);
 
         this._description = ensureElement<HTMLElement>(`.order-success__description`, this.container);

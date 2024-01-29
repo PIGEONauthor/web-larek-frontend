@@ -1,29 +1,16 @@
-import {Component} from "./base/Component";
-import {ProductItem} from "./AppData"
-// import {ILot, LotStatus} from "../../types";
-import {bem, createElement, ensureElement/*, formatNumber*/} from "../utils/utils";
-// import clsx from "clsx";
+// ▷▷▷ IMPORT
+import { ProductItem } from "./AppData"
+import { IActions,  ICard} from "../types";
+import { Component } from "./base/Component";
+import { ensureElement } from "../utils/utils";
 
 // --------------------------CARD--------------------------
-interface ICardActions {
-    onClick: (event: MouseEvent) => void;
-}
-
-export interface ICard<T> {
-    category?: string;
-    title: string;
-    image?: string;
-    price: number;
-    description?: string | string[];
-    itemIndex: number;
-}
-
 export class Card<T> extends Component<ICard<T>> {
     protected _title: HTMLElement;
     protected _price: HTMLElement;
     protected _button?: HTMLButtonElement;
 
-    constructor(protected blockName: string, container: HTMLElement, actions?: ICardActions) {
+    constructor(protected blockName: string, container: HTMLElement, actions?: IActions) {
         super(container);
 
         this._title = ensureElement<HTMLElement>(`.${blockName}__title`, container);
@@ -47,7 +34,6 @@ export class Card<T> extends Component<ICard<T>> {
         return this.container.dataset.id || '';
     }
 
-// ------------------------------------------------------
     set title(value: string) {
         this.setText(this._title, value);
     }
@@ -56,7 +42,6 @@ export class Card<T> extends Component<ICard<T>> {
         return this._title.textContent || '';
     }
 
-// ------------------------------------------------------
     set price(value: number) {
         if (value) {
           this.setText(this._price, `${value} синапсов`)
@@ -68,20 +53,17 @@ export class Card<T> extends Component<ICard<T>> {
 
 // --------------------------CATALOG_ITEM--------------------------
 export interface ICatalogItem {
-    category?: string;
-    image?: string;
-    description?: string | string[];
+    category: string;
+    image: string;
+    description: string | string[];
 }
 
 export class CatalogItem extends Card<ICatalogItem> {
-    protected _category?: HTMLElement;
-    protected _title: HTMLElement;
-    protected _image?: HTMLImageElement;
-    protected _description?: HTMLElement;
-    protected _price: HTMLElement;
-    protected _button?: HTMLButtonElement;
+    protected _category: HTMLElement;
+    protected _image: HTMLImageElement;
+    protected _description: HTMLElement;
     
-    constructor (container: HTMLElement, actions?: ICardActions) {
+    constructor (container: HTMLElement, actions?: IActions) {
         super('card', container, actions);
         
         this._category = ensureElement<HTMLElement>(`.card__category`, container);
@@ -104,7 +86,6 @@ export class CatalogItem extends Card<ICatalogItem> {
         }
     }
 
-    // ------------------------------------------------------
     set category(value: string) {
         this.setText(this._category, value);
         this.toggleClass(this._category, `card__category_${this.categoryColor(value)}`)
@@ -113,33 +94,33 @@ export class CatalogItem extends Card<ICatalogItem> {
     get category(): string {
         return this._category.textContent || '';
     }
-    // ------------------------------------------------------
+
     set image(value: string) {
         this.setImage(this._image, value, this.title)
     }
-// ------------------------------------------------------
+
     set description(value: string) {
         this.setText(this._description, value)
+    }
+
+    set button(basket: ProductItem[]) {
+        if (basket.filter(product => product.id === this.container.dataset.id).length > 0) {
+            this.setText(this._button, 'Удалить из корзины');
+        }else this.setText(this._button, 'Купить')
     }
 }
 
 // --------------------------BASKET_CARD--------------------------
 export interface IBasketCard {
     itemIndex: number;
-    title: string;
-    price: number;
 }
 
 export class BasketCard extends Card<IBasketCard> {
     protected _itemIndex: HTMLElement;
-    protected _title: HTMLElement;
-    protected _price: HTMLElement;
 
-    constructor(container: HTMLElement, actions?: ICardActions) {
+    constructor(container: HTMLElement, actions?: IActions) {
         super('card', container, actions);
         this._itemIndex = ensureElement<HTMLElement>(`.basket__item-index`, container);
-        // this._title = ensureElement<HTMLElement>(`.card-basket__title`, container);
-        // this._price = ensureElement<HTMLElement>(`.card-basket__price`, container);
         this._button = ensureElement<HTMLButtonElement>(`.basket__item-delete`, container);
     }
 

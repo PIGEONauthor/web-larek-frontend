@@ -1,21 +1,19 @@
-import {Component} from "../base/Component";
-import {IEvents} from "../base/events";
-import {ensureElement} from "../../utils/utils";
+// ▷▷▷ IMPORT
+import { IActions } from "../../types";
+import { IEvents } from "../base/events";
+import { Component } from "../base/Component";
+import { ensureElement } from "../../utils/utils";
 
 interface IFormState {
     valid: boolean;
     errors: string[];
 }
 
-interface IFormActions {
-    onClick: (event: MouseEvent) => void;
-}
-
 export class Form<T> extends Component<IFormState> {
     protected _submit?: HTMLButtonElement;
     protected _errors: HTMLElement;
 
-    constructor(protected container: HTMLFormElement, protected events?: IEvents, actions?: IFormActions) {
+    constructor(protected container: HTMLFormElement, protected events?: IEvents, actions?: IActions) {
         super(container);
 
         this._submit = ensureElement<HTMLButtonElement>('button[type=submit]', this.container);

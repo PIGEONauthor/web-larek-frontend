@@ -1,23 +1,14 @@
-// import _ from "lodash";
-// import {dayjs, formatNumber} from "../utils/utils";
-
-import {Model} from "./base/Model";
-import {FormErrors, IAppState, /*IBasketItem, IProduct,*/ IOrder, IOrderForm,/*, LotStatus*/
-IProductItem} from "../types";
+// ▷▷▷ IMPORT
 import { IEvents } from "./base/events";
+import {FormErrors,  IOrder, IOrderForm, IProductItem} from "../types";
 
-export type CatalogChangeEvent = {
-    catalog: ProductItem[]
-};
-
-export class ProductItem {
+export class ProductItem implements IProductItem{
     id: string;
     category: string;
     title: string;
     description?: string;
     image?: string;
     price: number;
-    // status: LotStatus;
 
     constructor(item: object, protected events: IEvents) {
       Object.assign(this, item);
@@ -44,7 +35,6 @@ export class ProductItem {
 }
 
 export class AppState {
-    // basket: string[];
     basket: ProductItem[] = [];
     catalog: ProductItem[];
     loading: boolean;
@@ -58,7 +48,6 @@ export class AppState {
     };
     preview: string | null;
     formErrors: FormErrors = {};
-    //events: IEvents;
 
   constructor (item: object, protected events: IEvents) {}
 
