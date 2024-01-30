@@ -3,17 +3,17 @@ import './scss/styles.scss';
 
 import { IOrderForm } from "./types";
 import { Page } from './components/Page';
+import { Success } from './components/Success';
 import { Payment } from './components/Payment';
 import { Contacts } from './components/Contacts';
 import { LarekAPI } from './components/LarekAPI';
 import { Modal } from './components/common/Modal';
 import { Basket } from './components/common/Basket';
 import { CDN_URL, API_URL } from './utils/constants';
-import { Success } from './components/Success';
 import { EventEmitter } from './components/base/events';
 import { CatalogItem, BasketCard } from './components/Card';
+import { ProductItem, AppState } from './components/AppData';
 import { cloneTemplate, createElement, ensureElement } from "./utils/utils";
-import { /*CatalogChangeEvent,*/ ProductItem, AppState } from './components/AppData';
 
 const events = new EventEmitter();
 const appData = new AppState({}, events);
@@ -58,7 +58,6 @@ const contacts = new Contacts(cloneTemplate(contactsTemplate), events, {
         appData.basket.forEach(order => {
             appData.setOrderField('items', order.id);
         });
-        console.log(appData.order)
         events.emit('success:open')
     }
 });
@@ -211,11 +210,9 @@ events.on ('contacts:changed', () => {
 events.on('success:open', () => {
     api.orderProducts(appData.order)
         .then((result) => {
+
             const success = new Success(cloneTemplate(successTemplate), {
                 onClick: () => {
-                    appData.clearBasket();
-                    events.emit('basket:changed');
-                    events.emit('payment:changed');
                     modal.close();
                 }
             });
@@ -225,6 +222,11 @@ events.on('success:open', () => {
                     description: appData.getTotal()
                 })
             });
+
+            appData.clearBasket();
+            events.emit('basket:changed');
+            events.emit('payment:changed');
+
         })
         .catch(err => {
             console.error(err);

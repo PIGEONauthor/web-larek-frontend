@@ -15,4 +15,15 @@
     @include mixins.flex(row);
     gap: 1.5rem;
   }
+
+  &-success{
+    
+    &__title {
+      margin-bottom: 0;
+    }
+    
+    &__description {
+      margin-top: 0;
+    }
+  }
 }

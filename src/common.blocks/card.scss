@@ -12,6 +12,7 @@
   &_full {
     flex-direction: row;
     background-color: transparent;
+    padding: 20px 185px 0 0; // add
 
     .card__title {
       flex-grow: 0;
@@ -54,6 +55,7 @@
   &__text {
     text-align: left;
     flex-grow: 1;
+    max-height: 250px;
   }
   &__category {
     padding: 0.5rem 1.25rem;

@@ -26,6 +26,11 @@ export class Payment extends Form<IOrderForm> {
             this.events.emit('payment:changed');
         })
     }
+
+    set address(value: string) {
+        this._address.value = value;
+    }
+
     // проверка, заполнено ли поле адреса
     getAddress() {
         return !!this._address.value;
