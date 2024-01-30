@@ -114,7 +114,6 @@ events.on('preview:changed', (item: ProductItem) => {
         api.getProductItem(item.id)
             .then((result) => {
                 item.description = result.description;
-                // item.history = result.history;
                 showItem(item);
             })
             .catch((err) => {

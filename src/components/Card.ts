@@ -30,16 +30,8 @@ export class Card<T> extends Component<ICard<T>> {
         this.container.dataset.id = value;
     }
 
-    get id(): string {
-        return this.container.dataset.id || '';
-    }
-
     set title(value: string) {
         this.setText(this._title, value);
-    }
-
-    get title(): string {
-        return this._title.textContent || '';
     }
 
     set price(value: number) {
@@ -89,10 +81,6 @@ export class CatalogItem extends Card<ICatalogItem> {
     set category(value: string) {
         this.setText(this._category, value);
         this.toggleClass(this._category, `card__category_${this.categoryColor(value)}`)
-    }
-
-    get category(): string {
-        return this._category.textContent || '';
     }
 
     set image(value: string) {

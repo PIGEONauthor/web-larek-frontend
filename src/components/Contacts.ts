@@ -22,14 +22,6 @@ export class Contacts extends Form<IOrderForm> {
         })
     }
 
-    set email(value: string) {
-        this._email.value = value;
-    }
-    
-    set phone(value: string) {
-        this._phone.value = value;
-    }
-
     getEmail() {
         return !!this._email.value
     }

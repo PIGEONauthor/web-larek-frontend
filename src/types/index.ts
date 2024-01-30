@@ -41,14 +41,6 @@ export interface IProductItem {
     price: number;
 }
 
-//export type IProduct = IProductItem /*& IAuction*/;
-
-// export type LotUpdate = Pick<IProduct, 'id' | 'datetime' | 'status' | 'price' | 'history'>;
-
-// export type IBasketItem = Pick<IProduct, 'id' | 'title' | 'price'> & {
-//     isMyBid: boolean
-// };
-
 export interface IAppState {
     catalog: IProductItem[];
     basket: string[];
@@ -58,11 +50,11 @@ export interface IAppState {
 }
 
 export interface IOrderForm {
-    payment?: string;
-    email?: string;
-    phone?: string;
-    address?: string;
-    total?: number;
+    payment: string;
+    email: string;
+    phone: string;
+    address: string;
+    total: number;
     items: string[];
 }
 
